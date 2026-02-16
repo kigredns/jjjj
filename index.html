@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>Sprawy Polityczne W Polsce</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(to bottom, #ffffff 0%, #ffffff 50%, #d4213d 50%, #d4213d 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.box {
+    background-color: rgba(255,255,255,0.97);
+    border-radius: 25px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+    padding: 40px 50px;
+    width: 700px;
+    text-align: center;
+    position: relative;
+}
+
+#title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 38px;
+    color: #1f2a44;
+    min-height: 80px;
+    margin-bottom: 30px;
+    font-weight: 700;
+}
+
+button {
+    padding: 12px 30px;
+    font-size: 16px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    color: white;
+    background-color: #d4213d;
+    margin-top: 25px;
+    display: none;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    transform: translateY(-3px) scale(1.05);
+    opacity: 0.9;
+}
+
+.event-frame {
+    background-color: #fff5f5;
+    border: 2px solid #d4213d;
+    border-radius: 18px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    padding: 25px 20px;
+    margin-top: 25px;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 0.6s ease;
+    text-align: left;
+}
+
+.event-frame.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.date {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #1f2a44;
+}
+
+.time {
+    display: flex;
+    align-items: center;
+    font-size: 17px;
+    margin-bottom: 12px;
+}
+
+.clock {
+    margin-right: 8px;
+    animation: tick 1s infinite alternate;
+}
+
+.event {
+    font-size: 16px;
+    background-color: #d4213d;
+    color: white;
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.end-screen {
+    font-size: 48px;
+    font-weight: 700;
+    color: #1f2a44;
+    display: none;
+    animation: fadeIn 1s forwards;
+    min-height: 80px;
+}
+
+#restartBtn {
+    display: none;
+    background-color: #1f2a44;
+}
+.event-frame {
+    background: linear-gradient(135deg, #fff5f5 0%, #ffecec 100%);
+    border: 2px solid #d4213d;
+    border-radius: 20px;
+    box-shadow: 0 12px 25px rgba(212,33,61,0.4);
+    padding: 25px 20px;
+    margin-top: 25px;
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 0.6s ease, transform 0.8s ease-in-out;
+    text-align: left;
+}
+
+.event-frame.show {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.6s ease;
+}
+
+#event-icon {
+    width: 100%;
+    max-width: 400px;
+    display: block;
+    margin: 20px auto 0 auto; 
+    border-radius: 15px;
+    opacity: 0;         
+    transform: translateY(30px); 
+    transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+#event-icon.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+
+@keyframes tick {
+    from { transform: rotate(-5deg);}
+    to { transform: rotate(5deg);}
+}
+
+@keyframes fadeIn {
+    from {opacity:0; transform:scale(0.5);}
+    to {opacity:1; transform:scale(1);}
+}
+
+
+</style>
+</head>
+<body>
+
+
+<div class="box">
+<div id="title"></div>
+<button id="startBtn" onclick="start()">Rozpocznij</button>
+<div id="events-screen" style="display:none;">
+<div class="event-frame" id="event-frame">
+    <div class="date" id="date"></div>
+    <div class="time"><div class="clock">🕘</div> <span id="time"></span></div>
+    <div class="event" id="event"></div>
+    <img id="event-icon" src="" alt="Ikona wydarzenia">
+</div>
+
+
+
+<button id="nextBtn" onclick="nextEvent()">Dalej</button>
+</div>
+<div class="end-screen" id="endScreen">KONIEC</div>
+<button id="restartBtn" onclick="restart()">POCZĄTEK</button>
+</div>
+
+<script>
+
+const text = "SPRAWY POLITYCZNE W POLSCE";
+const title = document.getElementById("title");
+let displayed = "";
+
+function typeLetter(index) {
+    if(index < text.length){
+        let letter = text[index];
+        let current = displayed + letter;
+        title.textContent = current + "_";
+        let blinkCount = 0;
+        const blinkInterval = setInterval(()=>{
+            if(title.textContent.endsWith("_")) title.textContent = current;
+            else title.textContent = current + "_";
+            blinkCount++;
+            if(blinkCount>=4){
+                clearInterval(blinkInterval);
+                displayed += letter;
+                title.innerHTML = "<b>" + displayed + "</b>";
+                typeLetter(index+1);
+            }
+        },70);
+    } else {
+        title.innerHTML = "<b>" + displayed + "</b>";
+        document.getElementById("startBtn").style.display = "inline-block";
+    }
+}
+typeLetter(0);
+
+const events = [
+    {
+        date: "Niemcy chcą kupić nasze systemy obrony",
+        time: "13 lutego",
+        event: "Okazało się, że Niemcy są zainteresowani kupnem polskich systemów Piorun — to przenośne wyrzutnie przeciwlotnicze, które Polska sama produkuje i które są używane m.in. przez Ukrainę. Wiceszef MON mówił, że to pokazuje, jak pozytywnie świat zaczyna patrzeć na polski przemysł obronny. To spora sprawa, bo może to być konkretny zarobek i prestiż dla Polski.",
+        icon: "cos.png"
+    },
+    {
+        date: "Fitch ostrzega Polskę o możliwym obniżeniu ratingu",
+        time: "10 lutego",
+        event: "Debaty i wypowiedzi posłów w mediach. W tych dniach w Sejmie dochodziło do wielu sporów między rządem a opozycją. Posłowie komentowali sytuację oraz nie zgadzali się w ważnych sprawach dotyczących funkcjonowania Sejmu.",
+        icon: "cos1.png"
+    },
+    {
+        date: "Polska nie dołącza na razie do „Board of Peace” USA",
+        time: "11 lutego",
+        event: "Rząd ogłosił, że Polska nie przystąpi w tej chwili do amerykańskiej „Rady Pokoju”, nowej inicjatywy pokojowej promowanej przez USA. Premier Tusk mówił, że są wątpliwości co do zasad działania i struktury tej rady, więc lepiej poczekać. Dodał, że relacje z USA są nadal ważne i wszystko można potem analizować ponownie.",
+        icon: "cos2.png"
+    },
+    {
+        date: "Miesięcznica smoleńska pełna napięć",
+        time: "10 lutego",
+        event: "Na Placu Piłsudskiego w Warszawie były kolejne obchody miesięcznicy katastrofy smoleńskiej, ale było głośno i nerwowo. Prezes PiS Jarosław Kaczyński nie pojawił się z powodu choroby, a przemawiał wiceprezes partii, który nazwał kontrmanifestantów „barbarzyńcami”. Przeciwnicy obchodów skandowali różne hasła, a media szeroko o tym pisały.",
+        icon: "cos3.png"
+    },
+    {
+        date: "Polskie systemy obronne zyskują uwagę zagranicą",
+        time: "13 lutego",
+        event: "Nie tylko Niemcy, ale też inni partnerzy zagraniczni obserwują, jak polski przemysł obronny radzi sobie z produkcją nowoczesnego sprzętu. Pioruny robią wrażenie i to może otworzyć więcej zamówień. To dobry sygnał dla firm i dla reputacji Polski jako producenta technologii wojskowej.",
+        icon: "6.png"
+    },
+        {
+        date: "Duży spór o ustawę SAFE i podpis prezydenta",
+        time: "13-14 lutego",
+        event: "W Polsce trwa ożywiona dyskusja wokół ustawy SAFE, programu inwestycyjnego wartego miliardy złotych. Podpis prezydenta nie jest jeszcze pewny, a opozycja i doradcy z BBN wyrażają wątpliwości co do niektórych zapisów. Media i społeczeństwo zastanawiają się, kto naprawdę skorzysta na tych środkach i czy trafią one tam, gdzie powinny.vvvvvvvv",
+        icon: "cos6.png"
+    },
+        {
+        date: "Prezydent zablokował uznanie śląskiego jako języka regionalnego",
+        time: "13 lutego",
+        event: "Prezydent zawetował ustawę, która miała uznać śląski za język regionalny. Chciał uniknąć sztucznych podziałów, bo językoznawcy uważają go raczej za dialekt. Cała sprawa wywołała sporo komentarzy w mediach i w regionie.",
+        icon: "ukraina.png"
+    },
+        {
+        date: "Konflikt Polski z USA wokół marszałka Sejmu",
+        time: "5 lutego",
+        event: "Ambasador USA w Polsce zerwał kontakt z marszałkiem Sejmu, bo obraził Trumpa w publicznych komentarzach. Premier Tusk musiał się do tego odnieść, żeby nie było większego kryzysu dyplomatycznego. Cała sprawa pokazała, że słowa polityków mogą psuć relacje z głównymi sojusznikami.",
+        icon: "lols.png"
+    },
+            {
+        date: "Polska zgadza się na nowe fundusze UE na obronę",
+        time: "13 lutego",
+        event: "Sejm przyjął ustawę, która pozwala Polsce dostać około 44 mld euro z UE na wojsko. Rząd mówi, że to pomoże modernizować armię i rozwijać przemysł obronny. Opozycja uważa, że Polska stanie się bardziej zależna od Brukseli i część kasy pójdzie na sprzęt zagraniczny.",
+        icon: "cos99.png"
+    },
+            {
+        date: "Sejm dał amnestię Polakom walczącym w Ukrainie",
+        time: "14 lutego",
+        event: "Sejm przyjął ustawę, która zwalnia Polaków walczących w ukraińskiej armii z odpowiedzialności karnej. Teraz nie grozi im już ściganie za udział w wojnie po stronie Ukrainy. Ustawa dostała prawie wszystkie głosy, a temat wywołał sporo komentarzy w mediach.",
+        icon: "sd.png"
+
+    },
+    
+];
+
+
+let index = 0;
+
+function start(){
+    title.style.display = "none";
+    document.getElementById("startBtn").style.display = "none";
+    document.getElementById("events-screen").style.display = "block";
+    index = 0;
+    showEvent();
+}
+function showEvent(){
+    const frame = document.getElementById("event-frame");
+    document.getElementById("date").textContent = events[index].date;
+    document.getElementById("time").textContent = events[index].time;
+    document.getElementById("event").textContent = events[index].event;
+    const img = document.getElementById("event-icon");
+    img.src = events[index].icon;
+    img.classList.remove("show");
+    setTimeout(() => {
+        img.classList.add("show");
+    }, 100); 
+    frame.classList.remove("show");
+    setTimeout(()=> frame.classList.add("show"),50);
+
+    document.getElementById("nextBtn").style.display = "inline-block";
+}
+
+
+
+function nextEvent(){
+    index++;
+    if(index >= events.length){
+        document.getElementById("events-screen").style.display = "none";
+        document.getElementById("endScreen").style.display = "block";
+        document.getElementById("restartBtn").style.display = "inline-block";
+    } else {
+        showEvent();
+    }
+}
+
+function restart(){
+    displayed = "";
+    title.textContent = "";
+    typeLetter(0);
+    document.getElementById("endScreen").style.display = "none";
+    document.getElementById("restartBtn").style.display = "none";
+    title.style.display = "block";
+}
+</script>
+
+</body>
+</html>
+
+
